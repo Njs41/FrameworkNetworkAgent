@@ -2,7 +2,7 @@ package no.runsafe.frameworknetworkagent;
 
 import net.minecraft.server.v1_6_R3.DedicatedServer;
 import net.minecraft.server.v1_6_R3.MinecraftServer;
-import no.runsafe.framework.api.IOutput;
+import no.runsafe.framework.api.IConsole;
 import no.runsafe.framework.api.event.plugin.IPluginEnabled;
 import no.runsafe.framework.internal.reflection.ReflectionHelper;
 import no.runsafe.framework.minecraft.networking.RunsafeServerConnection;
@@ -12,7 +12,7 @@ import java.net.UnknownHostException;
 
 public class AgentHook implements IPluginEnabled
 {
-	public AgentHook(IOutput output)
+	public AgentHook(IConsole output)
 	{
 		this.output = output;
 	}
@@ -20,7 +20,7 @@ public class AgentHook implements IPluginEnabled
 	@Override
 	public void OnPluginEnabled()
 	{
-		output.write("Hooker loaded.") ;
+		output.logInformation("Hooker loaded.");
 		DedicatedServer server = (DedicatedServer) MinecraftServer.getServer();
 		String serverIP = server.getServerIp();
 		InetAddress address;
@@ -28,7 +28,7 @@ public class AgentHook implements IPluginEnabled
 		try
 		{
 			address = (serverIP.length() > 0 ? InetAddress.getByName(serverIP) : null);
-			output.info(serverIP) ;
+			output.logInformation(serverIP);
 		}
 		catch (UnknownHostException exception)
 		{
@@ -36,7 +36,7 @@ public class AgentHook implements IPluginEnabled
 			return;
 		}
 
-		output.write("Stopping current server thread.");
+		output.logInformation("Stopping current server thread.");
 		server.ag().a(); // Make the current server connection terminate it's thread.
 
 		try
@@ -49,5 +49,5 @@ public class AgentHook implements IPluginEnabled
 		}
 	}
 
-	private final IOutput output;
+	private final IConsole output;
 }
