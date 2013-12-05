@@ -20,7 +20,7 @@ public class AgentHook implements IPluginEnabled
 	@Override
 	public void OnPluginEnabled()
 	{
-		output.info("Hooker loaded.");
+		output.write("Hooker loaded.") ;
 		DedicatedServer server = (DedicatedServer) MinecraftServer.getServer();
 		String serverIP = server.getServerIp();
 		InetAddress address;
@@ -32,11 +32,11 @@ public class AgentHook implements IPluginEnabled
 		}
 		catch (UnknownHostException exception)
 		{
-			output.warning(exception.getMessage()) ;
+			output.logWarning(exception.getMessage()) ;
 			return;
 		}
 
-		output.info("Stopping the current server connection..");
+		output.write("Stopping current server thread.");
 		server.ag().a(); // Make the current server connection terminate it's thread.
 
 		try
@@ -45,7 +45,7 @@ public class AgentHook implements IPluginEnabled
 		}
 		catch (Exception exception)
 		{
-			output.warning(exception.getMessage());
+			output.logWarning(exception.getMessage()) ;
 		}
 	}
 
