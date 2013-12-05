@@ -7,6 +7,6 @@ public class Plugin extends RunsafePlugin
 	@Override
 	protected void PluginSetup()
 	{
-		//addComponent(SomeComponent.class);
+		addComponent(AgentHook.class);
 	}
 }
