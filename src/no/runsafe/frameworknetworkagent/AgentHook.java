@@ -32,7 +32,7 @@ public class AgentHook implements IPluginEnabled
 		}
 		catch (UnknownHostException exception)
 		{
-			output.logWarning(exception.getMessage()) ;
+			output.logError(exception);
 			return;
 		}
 
@@ -45,7 +45,7 @@ public class AgentHook implements IPluginEnabled
 		}
 		catch (Exception exception)
 		{
-			output.logWarning(exception.getMessage()) ;
+			output.logException(exception);
 		}
 	}
 
