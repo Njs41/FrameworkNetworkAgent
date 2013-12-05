@@ -1,11 +1,53 @@
 package no.runsafe.frameworknetworkagent;
 
+import net.minecraft.server.v1_6_R3.DedicatedServer;
+import net.minecraft.server.v1_6_R3.MinecraftServer;
 import no.runsafe.framework.api.IOutput;
+import no.runsafe.framework.api.event.plugin.IPluginEnabled;
+import no.runsafe.framework.internal.reflection.ReflectionHelper;
+import no.runsafe.framework.minecraft.networking.RunsafeServerConnection;
 
-public class AgentHook
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+public class AgentHook implements IPluginEnabled
 {
 	public AgentHook(IOutput output)
 	{
-		output.info("This is a test.");
+		this.output = output;
 	}
+
+	@Override
+	public void OnPluginEnabled()
+	{
+		output.info("Hooker loaded.");
+		DedicatedServer server = (DedicatedServer) MinecraftServer.getServer();
+		String serverIP = server.getServerIp();
+		InetAddress address;
+
+		try
+		{
+			address = (serverIP.length() > 0 ? InetAddress.getByName(serverIP) : null);
+			output.info(serverIP) ;
+		}
+		catch (UnknownHostException exception)
+		{
+			output.warning(exception.getMessage()) ;
+			return;
+		}
+
+		output.info("Stopping the current server connection..");
+		server.ag().a(); // Make the current server connection terminate it's thread.
+
+		try
+		{
+			ReflectionHelper.setField(server, "s", new RunsafeServerConnection(server, address, server.I(), output));
+		}
+		catch (Exception exception)
+		{
+			output.warning(exception.getMessage());
+		}
+	}
+
+	private final IOutput output;
 }
