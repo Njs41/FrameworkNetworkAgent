@@ -2,17 +2,18 @@ package no.runsafe.frameworknetworkagent;
 
 import net.minecraft.server.v1_6_R3.DedicatedServer;
 import net.minecraft.server.v1_6_R3.MinecraftServer;
-import no.runsafe.framework.api.IConsole;
+import net.minecraft.server.v1_6_R3.ServerConnection;
+import no.runsafe.framework.api.IOutput;
 import no.runsafe.framework.api.event.plugin.IPluginEnabled;
+import no.runsafe.framework.internal.networking.RunsafeServerConnectionThread;
 import no.runsafe.framework.internal.reflection.ReflectionHelper;
-import no.runsafe.framework.minecraft.networking.RunsafeServerConnection;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class AgentHook implements IPluginEnabled
 {
-	public AgentHook(IConsole output)
+	public AgentHook(IOutput output)
 	{
 		this.output = output;
 	}
@@ -20,7 +21,6 @@ public class AgentHook implements IPluginEnabled
 	@Override
 	public void OnPluginEnabled()
 	{
-		output.logInformation("Hooker loaded.");
 		DedicatedServer server = (DedicatedServer) MinecraftServer.getServer();
 		String serverIP = server.getServerIp();
 		InetAddress address;
@@ -36,12 +36,14 @@ public class AgentHook implements IPluginEnabled
 			return;
 		}
 
-		output.logInformation("Stopping current server thread.");
-		server.ag().a(); // Make the current server connection terminate it's thread.
+		ServerConnection connection = server.ag();
+		connection.a(); // Terminate the current thread.
 
 		try
 		{
-			ReflectionHelper.setField(server, "s", new RunsafeServerConnection(server, address, server.I(), output));
+			RunsafeServerConnectionThread newThread = new RunsafeServerConnectionThread(connection, address, server.I(), output);
+			newThread.start(); // Start the thread before providing it to the connection.
+			ReflectionHelper.setField(connection, "b", newThread); // Give the started thread to the connection.
 		}
 		catch (Exception exception)
 		{
@@ -49,5 +51,5 @@ public class AgentHook implements IPluginEnabled
 		}
 	}
 
-	private final IConsole output;
+	private final IOutput output;
 }
