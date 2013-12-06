@@ -38,6 +38,7 @@ public class AgentHook implements IPluginEnabled
 
 		ServerConnection connection = server.ag();
 		connection.a(); // Terminate the current thread.
+		connection.a = true; // This needs to be true or the thread will exit.
 
 		try
 		{
