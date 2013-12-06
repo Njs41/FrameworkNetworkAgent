@@ -1,12 +1,10 @@
 package no.runsafe.frameworknetworkagent;
 
 import net.minecraft.server.v1_6_R3.DedicatedServer;
-import net.minecraft.server.v1_6_R3.DedicatedServerConnection;
 import net.minecraft.server.v1_6_R3.MinecraftServer;
-import net.minecraft.server.v1_6_R3.ServerConnection;
 import no.runsafe.framework.api.IOutput;
 import no.runsafe.framework.api.event.plugin.IPluginEnabled;
-import no.runsafe.framework.internal.networking.RunsafeServerConnectionThread;
+import no.runsafe.framework.internal.networking.RunsafeServerConnection;
 import no.runsafe.framework.internal.reflection.ReflectionHelper;
 
 import java.net.InetAddress;
@@ -37,15 +35,12 @@ public class AgentHook implements IPluginEnabled
 			return;
 		}
 
-		DedicatedServerConnection connection = (DedicatedServerConnection) server.ag();
-		connection.a(); // Terminate the current thread.
-		connection.a = true; // This needs to be true or the thread will exit.
+		server.ag().a(); // Terminate the current network thread.
 
 		try
 		{
-			RunsafeServerConnectionThread newThread = new RunsafeServerConnectionThread(connection, address, server.I(), output);
-			newThread.start(); // Start the thread before providing it to the connection.
-			ReflectionHelper.setField(connection, "b", newThread); // Give the started thread to the connection.
+			RunsafeServerConnection connection = new RunsafeServerConnection(server, address, server.I(), output);
+			ReflectionHelper.setField(server, "s", connection); // Give the connection to the server.
 		}
 		catch (Exception exception)
 		{
