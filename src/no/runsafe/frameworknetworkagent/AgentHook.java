@@ -1,6 +1,7 @@
 package no.runsafe.frameworknetworkagent;
 
 import net.minecraft.server.v1_6_R3.DedicatedServer;
+import net.minecraft.server.v1_6_R3.DedicatedServerConnection;
 import net.minecraft.server.v1_6_R3.MinecraftServer;
 import net.minecraft.server.v1_6_R3.ServerConnection;
 import no.runsafe.framework.api.IOutput;
@@ -36,7 +37,7 @@ public class AgentHook implements IPluginEnabled
 			return;
 		}
 
-		ServerConnection connection = server.ag();
+		DedicatedServerConnection connection = (DedicatedServerConnection) server.ag();
 		connection.a(); // Terminate the current thread.
 		connection.a = true; // This needs to be true or the thread will exit.
 
