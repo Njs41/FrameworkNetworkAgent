@@ -2,8 +2,8 @@ package no.runsafe.frameworknetworkagent;
 
 import net.minecraft.server.v1_6_R3.DedicatedServer;
 import net.minecraft.server.v1_6_R3.MinecraftServer;
-import no.runsafe.framework.api.IOutput;
 import no.runsafe.framework.api.event.plugin.IPluginEnabled;
+import no.runsafe.framework.api.log.IConsole;
 import no.runsafe.framework.internal.networking.RunsafeServerConnection;
 import no.runsafe.framework.internal.reflection.ReflectionHelper;
 
@@ -12,9 +12,9 @@ import java.net.UnknownHostException;
 
 public class AgentHook implements IPluginEnabled
 {
-	public AgentHook(IOutput output)
+	public AgentHook(IConsole output)
 	{
-		this.output = output;
+		this.console = output;
 	}
 
 	@Override
@@ -27,11 +27,11 @@ public class AgentHook implements IPluginEnabled
 		try
 		{
 			address = (serverIP.length() > 0 ? InetAddress.getByName(serverIP) : null);
-			output.logInformation(serverIP);
+			console.logInformation(serverIP);
 		}
 		catch (UnknownHostException exception)
 		{
-			output.logException(exception);
+			console.logException(exception);
 			return;
 		}
 
@@ -39,14 +39,14 @@ public class AgentHook implements IPluginEnabled
 
 		try
 		{
-			RunsafeServerConnection connection = new RunsafeServerConnection(server, address, server.I(), output);
+			RunsafeServerConnection connection = new RunsafeServerConnection(server, address, server.I(), console);
 			ReflectionHelper.setField(server, "s", connection); // Give the connection to the server.
 		}
 		catch (Exception exception)
 		{
-			output.logException(exception);
+			console.logException(exception);
 		}
 	}
 
-	private final IOutput output;
+	private final IConsole console;
 }
