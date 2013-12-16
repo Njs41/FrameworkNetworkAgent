@@ -5,7 +5,7 @@ import net.minecraft.server.v1_6_R3.MinecraftServer;
 import no.runsafe.framework.api.event.plugin.IPluginEnabled;
 import no.runsafe.framework.api.log.IConsole;
 import no.runsafe.framework.internal.networking.RunsafeServerConnection;
-import no.runsafe.framework.internal.reflection.ReflectionHelper;
+import no.runsafe.framework.internal.reflection.Helper;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -40,7 +40,7 @@ public class AgentHook implements IPluginEnabled
 		try
 		{
 			RunsafeServerConnection connection = new RunsafeServerConnection(server, address, server.I(), console);
-			ReflectionHelper.setField(server, "s", connection); // Give the connection to the server.
+			Helper.setField(server, "s", connection); // Give the connection to the server.
 		}
 		catch (Exception exception)
 		{
